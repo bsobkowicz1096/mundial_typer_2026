@@ -1,0 +1,14 @@
+{% if players %}
+<select name="answer_player"
+        id="answer_player_{{ q_id }}"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 mt-2">
+    <option value="">— wybierz zawodnika —</option>
+    {% for player in players %}
+    <option value="{{ player.id }}" {% if selected_id == player.id|stringformat:"s" %}selected{% endif %}>
+        {{ player.name }}
+    </option>
+    {% endfor %}
+</select>
+{% else %}
+<p class="text-xs text-gray-400 mt-2">Brak zawodników dla tej drużyny.</p>
+{% endif %}

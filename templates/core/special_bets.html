@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static tz %}
+{% block title %}Zakłady dodatkowe — Mundial 2026{% endblock %}
+{% block content %}
+
+<div class="mb-6">
+    <h1 class="text-2xl font-bold">Zakłady dodatkowe</h1>
+    <p class="text-sm text-gray-500 mt-1">Każdy trafiony zakład = 2 pkt. Deadline: 10 czerwca 2026, 21:00.</p>
+</div>
+
+<div class="space-y-4">
+{% for item in items %}
+    {% with q=item.question bet=item.existing %}
+    <div class="bg-white rounded-lg shadow p-5">
+
+        <!-- Nagłówek pytania -->
+        <div class="flex items-start justify-between gap-4 mb-3">
+            <p class="font-medium text-gray-900">{{ q.text }}</p>
+            {% if q.is_resolved %}
+                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-gray-100 text-gray-500">Rozstrzygnięte</span>
+            {% elif bet %}
+                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-purple-100 text-purple-700">Obstawione</span>
+            {% else %}
+                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-yellow-100 text-yellow-700">Brak zakładu</span>
+            {% endif %}
+        </div>
+
+        {% if q.is_resolved %}
+            <!-- Rozstrzygnięte -->
+            <div class="text-sm text-gray-600">
+                Poprawna odpowiedź:
+                <strong>
+                    {% if q.answer_type == "PLAYER" %}{{ q.correct_player }}
+                    {% elif q.answer_type == "TEAM" %}{{ q.correct_team }}
+                    {% else %}{{ q.correct_number }}{% endif %}
+                </strong>
+                {% if bet %}
+                    —
+                    {% if bet.points == 2 %}<span class="text-green-600 font-semibold">+2 pkt ✓</span>
+                    {% else %}<span class="text-gray-400">0 pkt</span>{% endif %}
+                {% endif %}
+            </div>
+
+        {% else %}
+            <!-- Aktywny zakład -->
+            {% if bet %}
+            <div class="text-sm text-gray-500 mb-3">
+                Twój typ:
+                <strong class="text-gray-800">
+                    {% if q.answer_type == "PLAYER" %}{{ bet.answer_player }}
+                    {% elif q.answer_type == "TEAM" %}
+                        {% if bet.answer_team.flag %}
+                            {% with "flags/"|add:bet.answer_team.flag as fp %}
+                            <img src="{% static fp %}" class="w-5 h-3 object-contain inline-block mr-1">
+                            {% endwith %}
+                        {% endif %}
+                        {{ bet.answer_team }}
+                    {% else %}{{ bet.answer_number }}{% endif %}
+                </strong>
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="question_id" value="{{ q.id }}">
+
+                {% if q.answer_type == "NUMBER" %}
+                    <!-- Pole liczbowe -->
+                    <div class="flex items-end gap-3">
+                        <input type="number" name="answer_number" min="0" max="500"
+                               value="{{ bet.answer_number|default:'' }}"
+                               required
+                               class="w-32 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <button type="submit"
+                                class="shrink-0 text-white px-4 py-2 rounded text-sm font-medium
+                                    {% if bet %}bg-purple-600 hover:bg-purple-700{% else %}bg-green-600 hover:bg-green-700{% endif %}">
+                            {% if bet %}Zmień{% else %}Zapisz{% endif %}
+                        </button>
+                    </div>
+
+                {% elif q.answer_type == "TEAM" %}
+                    <!-- Grid drużyn z flagami -->
+                    <p class="text-xs text-gray-500 mb-2">Wybierz drużynę:</p>
+                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-1 max-h-52 overflow-y-auto rounded border border-gray-100 p-2">
+                        {% for team in teams %}
+                        <button type="button"
+                                onclick="selectTeam(this, 'team_{{ q.id }}', '{{ team.id }}')"
+                                data-team-id="{{ team.id }}"
+                                class="team-tile flex flex-col items-center p-1 rounded border text-xs cursor-pointer hover:border-green-400 hover:bg-green-50 transition-colors
+                                       {% if bet.answer_team_id == team.id %}border-green-500 bg-green-50{% else %}border-transparent{% endif %}">
+                            {% if team.flag %}
+                                {% with "flags/"|add:team.flag as fp %}
+                                <img src="{% static fp %}" class="w-6 h-4 object-contain">
+                                {% endwith %}
+                            {% endif %}
+                            <span class="text-gray-700 leading-tight mt-0.5 truncate w-full text-center">{{ team.code }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="answer_team" id="team_{{ q.id }}"
+                           value="{{ bet.answer_team_id|default:'' }}">
+                    <button type="submit"
+                            class="mt-3 text-white px-4 py-2 rounded text-sm font-medium
+                                {% if bet %}bg-purple-600 hover:bg-purple-700{% else %}bg-green-600 hover:bg-green-700{% endif %}">
+                        {% if bet %}Zmień{% else %}Zapisz{% endif %}
+                    </button>
+
+                {% else %}
+                    <!-- PLAYER: grid drużyn → htmx ładuje zawodników -->
+                    <p class="text-xs text-gray-500 mb-2">Wybierz drużynę:</p>
+                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-1 max-h-52 overflow-y-auto rounded border border-gray-100 p-2">
+                        {% for team in teams %}
+                        <button type="button"
+                                hx-get="{% url 'core:players_by_team' team.id %}?q={{ q.id }}&selected={{ bet.answer_player_id|default:'' }}"
+                                hx-target="#players_{{ q.id }}"
+                                hx-swap="innerHTML"
+                                onclick="selectTeam(this, '_team_sel_{{ q.id }}', '{{ team.id }}')"
+                                data-team-id="{{ team.id }}"
+                                class="team-tile flex flex-col items-center p-1 rounded border text-xs cursor-pointer hover:border-green-400 hover:bg-green-50 transition-colors
+                                       {% if item.selected_team_id == team.id|stringformat:'s' %}border-green-500 bg-green-50{% else %}border-transparent{% endif %}">
+                            {% if team.flag %}
+                                {% with "flags/"|add:team.flag as fp %}
+                                <img src="{% static fp %}" class="w-6 h-4 object-contain">
+                                {% endwith %}
+                            {% endif %}
+                            <span class="text-gray-700 leading-tight mt-0.5 truncate w-full text-center">{{ team.code }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Dropdown zawodników (htmx lub pre-loaded) -->
+                    <div id="players_{{ q.id }}">
+                        {% if item.preloaded_players %}
+                        <select name="answer_player" id="answer_player_{{ q.id }}"
+                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 mt-2">
+                            <option value="">— wybierz zawodnika —</option>
+                            {% for player in item.preloaded_players %}
+                            <option value="{{ player.id }}" {% if bet.answer_player_id == player.id %}selected{% endif %}>
+                                {{ player.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% else %}
+                        <p class="text-xs text-gray-400 mt-2">← Wybierz drużynę żeby zobaczyć zawodników.</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit"
+                            class="mt-3 text-white px-4 py-2 rounded text-sm font-medium
+                                {% if bet %}bg-purple-600 hover:bg-purple-700{% else %}bg-green-600 hover:bg-green-700{% endif %}">
+                        {% if bet %}Zmień{% else %}Zapisz{% endif %}
+                    </button>
+                {% endif %}
+
+            </form>
+        {% endif %}
+
+    </div>
+    {% endwith %}
+{% endfor %}
+</div>
+
+<script>
+function selectTeam(btn, inputId, teamId) {
+    const grid = btn.closest('.grid');
+    grid.querySelectorAll('.team-tile').forEach(b => {
+        b.classList.remove('border-green-500', 'bg-green-50');
+        b.classList.add('border-transparent');
+    });
+    btn.classList.remove('border-transparent');
+    btn.classList.add('border-green-500', 'bg-green-50');
+    const input = document.getElementById(inputId);
+    if (input) input.value = teamId;
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Obstaw — {{ match }} — Mundial 2026{% endblock %}
+{% block content %}
+
+<div class="max-w-sm mx-auto mt-8">
+    <a href="{% url 'core:match_list' %}" class="text-sm text-gray-500 hover:underline">← Wróć do meczów</a>
+
+    <div class="bg-white rounded-lg shadow p-6 mt-4">
+        <h1 class="text-xl font-bold text-center mb-1">
+            {{ match.home_team.name }} vs {{ match.away_team.name }}
+        </h1>
+        <p class="text-center text-gray-400 text-sm mb-6">
+            {{ match.match_date|date:"l, j E Y, H:i" }} · {{ match.get_stage_display }}
+        </p>
+
+        {% if match.is_bettable %}
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex items-center justify-center gap-4">
+                    {{ form.home_score }}
+                    <span class="text-2xl font-bold text-gray-400">:</span>
+                    {{ form.away_score }}
+                </div>
+                {% if form.errors %}
+                    <p class="text-red-600 text-sm text-center">Podaj prawidłowe wartości (0–20).</p>
+                {% endif %}
+                <button type="submit"
+                        class="w-full bg-green-700 text-white py-2 rounded hover:bg-green-800 font-medium">
+                    {% if form.instance.pk %}Zmień typ{% else %}Zapisz typ{% endif %}
+                </button>
+            </form>
+        {% else %}
+            <div class="text-center text-gray-500 py-4">
+                <p class="text-lg font-medium">Obstawianie zamknięte.</p>
+                {% if form.instance.pk %}
+                    <p class="mt-2">Twój typ: <strong>{{ form.instance.home_score }}:{{ form.instance.away_score }}</strong></p>
+                {% else %}
+                    <p class="mt-2 text-gray-400">Nie obstawiłeś tego meczu.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

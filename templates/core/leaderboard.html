@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Tabela — Mundial 2026{% endblock %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">Tabela ligi</h1>
+
+<div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b text-xs text-gray-500 uppercase tracking-wide">
+            <tr>
+                <th class="px-4 py-3 text-center w-12">#</th>
+                <th class="px-4 py-3 text-left">Gracz</th>
+                <th class="px-4 py-3 text-center">Pkt</th>
+                <th class="px-4 py-3 text-center text-green-600" title="Dokładne wyniki">3 pkt</th>
+                <th class="px-4 py-3 text-center text-yellow-500 hidden sm:table-cell" title="Trafione kierunki">1 pkt</th>
+                <th class="px-4 py-3 text-center text-blue-500 hidden md:table-cell" title="Zakłady dodatkowe">Spec</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body"
+               hx-get="{% url 'core:leaderboard' %}"
+               hx-trigger="every 60s"
+               hx-swap="innerHTML">
+            {% include "core/partials/leaderboard_table.html" %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
