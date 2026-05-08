@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from .models import Bet, InviteCode, Player, SpecialBet, Team
 
-INPUT_CLASS = "w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+INPUT_CLASS = "w-full border border-zinc-700 rounded px-3 py-2 text-sm bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
 
 
 class SpecialBetForm(forms.ModelForm):
@@ -57,11 +57,11 @@ class BetForm(forms.ModelForm):
         widgets = {
             "home_score": forms.NumberInput(attrs={
                 "min": 0, "max": 20,
-                "class": "w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-green-500",
+                "class": "w-12 text-center border border-zinc-700 rounded px-1 py-1 text-sm font-bold bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500",
             }),
             "away_score": forms.NumberInput(attrs={
                 "min": 0, "max": 20,
-                "class": "w-12 text-center border border-gray-300 rounded px-1 py-1 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-green-500",
+                "class": "w-12 text-center border border-zinc-700 rounded px-1 py-1 text-sm font-bold bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500",
             }),
         }
 

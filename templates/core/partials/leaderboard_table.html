@@ -1,29 +1,29 @@
 {% for lb in rankings %}
-<tr class="{% if lb.user == request.user %}bg-green-50{% else %}hover:bg-gray-50{% endif %} border-b">
+<tr class="{% if lb.user == request.user %}bg-violet-950{% else %}hover:bg-zinc-800{% endif %} border-b border-zinc-800">
     <td class="px-4 py-3 text-center font-bold w-12">
         {{ lb.position }}
         <span class="text-xs ml-0.5
-            {% if lb.position_trend == 'up' %}text-green-500
-            {% elif lb.position_trend == 'down' %}text-red-400
-            {% else %}text-gray-300{% endif %}">
+            {% if lb.position_trend == 'up' %}text-orange-400
+            {% elif lb.position_trend == 'down' %}text-rose-500
+            {% else %}text-zinc-600{% endif %}">
             {% if lb.position_trend == 'up' %}▲{% elif lb.position_trend == 'down' %}▼{% else %}—{% endif %}
         </span>
     </td>
     <td class="px-4 py-3">
         <a href="{% url 'core:profile' lb.user.username %}"
-           class="font-medium hover:text-green-700">
+           class="font-medium hover:text-orange-400">
             {{ lb.user.username }}
-            {% if lb.user == request.user %}<span class="text-xs text-gray-400 ml-1">(Ty)</span>{% endif %}
+            {% if lb.user == request.user %}<span class="text-xs text-zinc-500 ml-1">(Ty)</span>{% endif %}
         </a>
     </td>
     <td class="px-4 py-3 text-center font-bold text-lg">{{ lb.total_points }}</td>
-    <td class="px-4 py-3 text-center text-green-600 font-medium">{{ lb.exact_hits }}</td>
-    <td class="px-4 py-3 text-center text-yellow-500 font-medium hidden sm:table-cell">{{ lb.direction_hits }}</td>
-    <td class="px-4 py-3 text-center text-blue-500 hidden md:table-cell">{{ lb.special_points }}</td>
+    <td class="px-4 py-3 text-center text-orange-400 font-medium">{{ lb.exact_hits }}</td>
+    <td class="px-4 py-3 text-center text-amber-400 font-medium hidden sm:table-cell">{{ lb.direction_hits }}</td>
+    <td class="px-4 py-3 text-center text-violet-400 hidden md:table-cell">{{ lb.special_points }}</td>
 </tr>
 {% empty %}
 <tr>
-    <td colspan="6" class="px-4 py-8 text-center text-gray-400">
+    <td colspan="6" class="px-4 py-8 text-center text-zinc-500">
         Tabela pojawi się po pierwszych meczach.
     </td>
 </tr>

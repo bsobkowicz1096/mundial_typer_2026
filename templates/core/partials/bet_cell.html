@@ -10,40 +10,40 @@
                    value="{{ match.user_bet.home_score|default_if_none:'' }}"
                    data-orig="{{ match.user_bet.home_score|default_if_none:'' }}"
                    min="0" max="20" required
-                   class="w-9 text-center border border-gray-300 rounded px-1 py-1 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-green-500">
-            <span class="text-gray-400 font-bold">:</span>
+                   class="w-9 text-center border border-zinc-700 rounded px-1 py-1 text-sm font-bold bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <span class="text-zinc-600 font-bold">:</span>
             <input type="number" name="away_score"
                    value="{{ match.user_bet.away_score|default_if_none:'' }}"
                    data-orig="{{ match.user_bet.away_score|default_if_none:'' }}"
                    min="0" max="20" required
-                   class="w-9 text-center border border-gray-300 rounded px-1 py-1 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-green-500">
+                   class="w-9 text-center border border-zinc-700 rounded px-1 py-1 text-sm font-bold bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
             <button type="submit"
                     data-label-clean="{% if match.user_bet %}Zmień{% else %}Zapisz{% endif %}"
-                    data-class-clean="{% if match.user_bet %}bg-purple-600 hover:bg-purple-700{% else %}bg-green-600 hover:bg-green-700{% endif %}"
+                    data-class-clean="{% if match.user_bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-orange-500{% endif %}"
                     class="ml-1 text-white px-1.5 py-1 rounded text-xs whitespace-nowrap
-                        {% if match.user_bet %}bg-purple-600 hover:bg-purple-700{% else %}bg-green-600 hover:bg-green-700{% endif %}">
+                        {% if match.user_bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-orange-500{% endif %}">
                 <span class="hidden sm:inline">{% if match.user_bet %}Zmień{% else %}Zapisz{% endif %}</span>
                 <span class="sm:hidden">✓</span>
             </button>
         </form>
         {% if form_errors %}
-            <p class="text-red-600 text-xs mt-1">Podaj prawidłowe wartości (0–20).</p>
+            <p class="text-red-400 text-xs mt-1">Podaj prawidłowe wartości (0–20).</p>
         {% endif %}
     {% elif match.user_bet %}
         <div class="flex items-center gap-2">
-            <span class="font-bold text-gray-800">
+            <span class="font-bold text-zinc-100">
                 {{ match.user_bet.home_score }}:{{ match.user_bet.away_score }}
             </span>
             {% if match.is_finished and match.user_bet.points is not None %}
                 <span class="text-sm font-semibold
-                    {% if match.user_bet.points == 3 %}text-green-600
-                    {% elif match.user_bet.points == 1 %}text-yellow-500
-                    {% else %}text-gray-400{% endif %}">
+                    {% if match.user_bet.points == 3 %}text-orange-400
+                    {% elif match.user_bet.points == 1 %}text-amber-400
+                    {% else %}text-zinc-600{% endif %}">
                     {{ match.user_bet.points }} pkt
                 </span>
             {% endif %}
         </div>
     {% else %}
-        <span class="text-gray-400 text-sm">—</span>
+        <span class="text-zinc-600 text-sm">—</span>
     {% endif %}
 </div>

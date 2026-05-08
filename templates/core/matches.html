@@ -6,30 +6,30 @@
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold">Mecze</h1>
     {% if user_rank %}
-        <span class="text-sm text-gray-500">Twoja pozycja: <strong class="text-green-700">#{{ user_rank.position }}</strong> ({{ user_rank.total_points }} pkt)</span>
+        <span class="text-sm text-zinc-400">Twoja pozycja: <strong class="text-orange-400">#{{ user_rank.position }}</strong> ({{ user_rank.total_points }} pkt)</span>
     {% endif %}
 </div>
 
 {% if not grouped_matches %}
-    <div class="bg-white rounded-lg shadow p-8 text-center text-gray-400">
+    <div class="bg-zinc-900 rounded-lg shadow p-8 text-center text-zinc-500">
         Terminarz zostanie załadowany przed turniejem.
     </div>
 {% endif %}
 
 {% for date, day_matches in grouped_matches %}
 <div class="mb-6">
-    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+    <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">
         {{ date|date:"l, j E Y" }}
     </h2>
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="bg-zinc-900 rounded-lg shadow overflow-hidden">
         {% for match in day_matches %}
-        <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b{% endif %}
-                    {% if match.is_finished %}bg-gray-50{% endif %}">
+        <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-zinc-800{% endif %}
+                    {% if match.is_finished %}bg-zinc-950{% endif %}">
 
             <!-- Czas i etap -->
             <div class="w-16 text-center shrink-0">
-                <div class="text-sm font-medium text-gray-700">{{ match.match_date|localtime|time:"H:i" }}</div>
-                <div class="text-xs text-gray-400">{{ match.get_stage_display }}</div>
+                <div class="text-sm font-medium text-zinc-300">{{ match.match_date|localtime|time:"H:i" }}</div>
+                <div class="text-xs text-zinc-500">{{ match.get_stage_display }}</div>
             </div>
 
             <!-- Drużyny i wynik -->
@@ -48,7 +48,7 @@
                         {{ match.home_score }}:{{ match.away_score }}
                     </span>
                 {% else %}
-                    <span class="text-gray-400 text-sm shrink-0">vs</span>
+                    <span class="text-zinc-600 text-sm shrink-0">vs</span>
                 {% endif %}
                 <!-- gość: flaga przy vs, nazwa z lewej -->
                 <div class="flex items-center justify-start gap-1.5 w-24 sm:w-32 min-w-0">

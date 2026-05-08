@@ -6,23 +6,23 @@
     <div>
         <h1 class="text-2xl font-bold">{{ viewed_user.username }}</h1>
         {% if user_rank %}
-            <p class="text-gray-500 text-sm">
+            <p class="text-zinc-400 text-sm">
                 Pozycja: <strong>#{{ user_rank.position }}</strong> ·
                 {{ user_rank.total_points }} pkt ·
                 Dokładne: {{ user_rank.exact_hits }} ·
                 Kierunki: {{ user_rank.direction_hits }}
             </p>
         {% else %}
-            <p class="text-gray-400 text-sm">Brak danych rankingowych.</p>
+            <p class="text-zinc-500 text-sm">Brak danych rankingowych.</p>
         {% endif %}
     </div>
 </div>
 
-<h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Historia typów</h2>
-<div class="bg-white rounded-lg shadow overflow-hidden">
+<h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Historia typów</h2>
+<div class="bg-zinc-900 rounded-lg shadow overflow-hidden">
     {% if bets %}
         <table class="w-full text-sm">
-            <thead class="bg-gray-50 border-b text-xs text-gray-500 uppercase tracking-wide">
+            <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
                 <tr>
                     <th class="px-4 py-3 text-left">Mecz</th>
                     <th class="px-4 py-3 text-center">Typ</th>
@@ -32,15 +32,15 @@
             </thead>
             <tbody>
                 {% for bet in bets %}
-                <tr class="border-b hover:bg-gray-50">
+                <tr class="border-b border-zinc-800 hover:bg-zinc-800">
                     <td class="px-4 py-3">
                         <div class="font-medium">{{ bet.match.home_team.name }} vs {{ bet.match.away_team.name }}</div>
-                        <div class="text-xs text-gray-400">{{ bet.match.match_date|date:"j E Y" }}</div>
+                        <div class="text-xs text-zinc-500">{{ bet.match.match_date|date:"j E Y" }}</div>
                     </td>
                     <td class="px-4 py-3 text-center font-bold">
                         {{ bet.home_score }}:{{ bet.away_score }}
                     </td>
-                    <td class="px-4 py-3 text-center text-gray-500">
+                    <td class="px-4 py-3 text-center text-zinc-400">
                         {% if bet.match.is_finished %}
                             {{ bet.match.home_score }}:{{ bet.match.away_score }}
                         {% else %}
@@ -49,11 +49,11 @@
                     </td>
                     <td class="px-4 py-3 text-center font-semibold">
                         {% if bet.points is not None %}
-                            <span class="{% if bet.points == 3 %}text-green-600{% elif bet.points == 1 %}text-yellow-500{% else %}text-gray-400{% endif %}">
+                            <span class="{% if bet.points == 3 %}text-orange-400{% elif bet.points == 1 %}text-amber-400{% else %}text-zinc-600{% endif %}">
                                 {{ bet.points }}
                             </span>
                         {% else %}
-                            <span class="text-gray-300">—</span>
+                            <span class="text-zinc-700">—</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -61,7 +61,7 @@
             </tbody>
         </table>
     {% else %}
-        <div class="px-4 py-8 text-center text-gray-400">
+        <div class="px-4 py-8 text-center text-zinc-500">
             Brak obstawionych meczów.
         </div>
     {% endif %}
