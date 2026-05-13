@@ -39,6 +39,7 @@ class Player(models.Model):
 
 class Match(models.Model):
     STAGE_CHOICES = [
+        ("LEAGUE", "Liga"),
         ("GROUP", "Faza grupowa"),
         ("R32", "1/16 finału"),
         ("R16", "1/8 finału"),

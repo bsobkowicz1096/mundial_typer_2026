@@ -1,0 +1,12 @@
+[Unit]
+Description=Mundial Typer — fetch match results
+After=network.target
+
+[Service]
+Type=oneshot
+User=www-data
+WorkingDirectory=/var/www/mundial_typer
+ExecStart=/var/www/mundial_typer/venv/bin/python manage.py fetch_results
+EnvironmentFile=/var/www/mundial_typer/.env
+StandardOutput=journal
+StandardError=journal
