@@ -62,8 +62,15 @@ def home(request):
 
 @login_required
 def match_list(request):
+    from datetime import timedelta
+    from django.utils import timezone
+    cutoff = timezone.now() - timedelta(hours=24)
+
     matches = list(
-        Match.objects.select_related("home_team", "away_team").order_by("match_date")
+        Match.objects
+        .filter(match_date__gte=cutoff)
+        .select_related("home_team", "away_team")
+        .order_by("match_date")
     )
     user_bets = {b.match_id: b for b in Bet.objects.filter(user=request.user)}
     for match in matches:
@@ -119,10 +126,48 @@ def place_bet(request, match_id):
 
 @login_required
 def leaderboard(request):
-    rankings = Leaderboard.objects.select_related("user").order_by("position")
+    rankings = list(Leaderboard.objects.select_related("user").order_by("position"))
+
+    # LIVE column: unfinished matches that already have a score (in-play)
+    live_matches = list(
+        Match.objects.filter(is_finished=False, home_score__isnull=False)
+        .prefetch_related("bets__user")
+    )
+    has_live = bool(live_matches)
+
+    if has_live:
+        # hypothetical pts per user from live matches
+        live_bonus = {}
+        for match in live_matches:
+            for bet in match.bets.all():
+                if bet.home_score > bet.away_score:
+                    bet_dir = "1"
+                elif bet.home_score < bet.away_score:
+                    bet_dir = "2"
+                else:
+                    bet_dir = "X"
+                if bet.home_score == match.home_score and bet.away_score == match.away_score:
+                    pts = 3
+                elif bet_dir == match.result_direction:
+                    pts = 1
+                else:
+                    pts = 0
+                live_bonus[bet.user_id] = live_bonus.get(bet.user_id, 0) + pts
+
+        for lb in rankings:
+            bonus = live_bonus.get(lb.user_id, 0)
+            lb.live_total = lb.total_points + bonus
+            lb.live_bonus = bonus
+        rankings.sort(key=lambda lb: (-lb.live_total, -lb.exact_hits, lb.user.username))
+    else:
+        for lb in rankings:
+            lb.live_total = None
+            lb.live_bonus = 0
+
+    ctx = {"rankings": rankings, "has_live": has_live}
     if _is_htmx(request):
-        return render(request, "core/partials/leaderboard_table.html", {"rankings": rankings})
-    return render(request, "core/leaderboard.html", {"rankings": rankings})
+        return render(request, "core/partials/leaderboard_table.html", ctx)
+    return render(request, "core/leaderboard.html", ctx)
 
 
 @login_required

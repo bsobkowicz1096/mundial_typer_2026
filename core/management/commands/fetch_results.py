@@ -9,11 +9,12 @@ from core.scoring import apply_match_results, update_leaderboard
 
 logger = logging.getLogger(__name__)
 
-BATCH_SIZE = 50  # max IDs per request (API limit)
+BATCH_SIZE = 50
+LIVE_STATUSES = {"IN_PLAY", "PAUSED", "HALFTIME"}
 
 
 class Command(BaseCommand):
-    help = "Fetch finished match results and apply scoring (cron target, every 5 min)"
+    help = "Fetch match results and live scores (cron target, every 5 min)"
 
     def handle(self, *args, **options):
         api_key = settings.FOOTBALL_DATA_API_KEY
@@ -33,6 +34,7 @@ class Command(BaseCommand):
 
         headers = {"X-Auth-Token": api_key}
         finished_data = {}
+        live_data = {}
 
         for i in range(0, len(pending), BATCH_SIZE):
             batch = pending[i : i + BATCH_SIZE]
@@ -51,31 +53,48 @@ class Command(BaseCommand):
                 return
 
             for m in resp.json().get("matches", []):
-                if m.get("status") == "FINISHED":
-                    ft = (m.get("score") or {}).get("fullTime") or {}
-                    if ft.get("home") is not None and ft.get("away") is not None:
+                status = m.get("status")
+                score  = m.get("score") or {}
+
+                if status == "FINISHED":
+                    ft = score.get("fullTime") or {}
+                    if ft.get("home") is not None:
                         finished_data[m["id"]] = (ft["home"], ft["away"])
 
-        if not finished_data:
-            self.stdout.write("No newly finished matches.")
-            return
+                elif status in LIVE_STATUSES:
+                    # current score during the match
+                    cur = score.get("fullTime") or score.get("halfTime") or {}
+                    if cur.get("home") is not None:
+                        live_data[m["id"]] = (cur["home"], cur["away"])
 
+        # ── Apply finished results ────────────────────────────────────────────
         updated = 0
         for api_id, (hs, as_) in finished_data.items():
             try:
                 match = Match.objects.get(api_id=api_id, is_finished=False)
             except Match.DoesNotExist:
                 continue
-
             match.home_score = hs
             match.away_score = as_
             match.is_finished = True
             match.save(update_fields=["home_score", "away_score", "is_finished"])
             apply_match_results(match)
             updated += 1
-            self.stdout.write(f"  ✓ {match}  {hs}:{as_}")
+            self.stdout.write(f"  ✓ FINISHED {match}  {hs}:{as_}")
 
         if updated:
             update_leaderboard()
 
-        self.stdout.write(self.style.SUCCESS(f"Done: {updated} match(es) updated."))
+        # ── Update live scores (no is_finished change) ────────────────────────
+        live_updated = 0
+        for api_id, (hs, as_) in live_data.items():
+            n = Match.objects.filter(api_id=api_id, is_finished=False).update(
+                home_score=hs, away_score=as_
+            )
+            if n:
+                live_updated += 1
+                self.stdout.write(f"  ~ LIVE     api_id={api_id}  {hs}:{as_}")
+
+        self.stdout.write(self.style.SUCCESS(
+            f"Done: {updated} finished, {live_updated} live score(s) updated."
+        ))

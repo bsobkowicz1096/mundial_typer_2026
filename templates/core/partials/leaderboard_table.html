@@ -1,13 +1,17 @@
 {% for lb in rankings %}
 <tr class="{% if lb.user == request.user %}bg-violet-950{% else %}hover:bg-zinc-800{% endif %} border-b border-zinc-800">
     <td class="px-4 py-3 text-center font-bold w-12">
-        {{ lb.position }}
-        <span class="text-xs ml-0.5
-            {% if lb.position_trend == 'up' %}text-orange-400
-            {% elif lb.position_trend == 'down' %}text-rose-500
-            {% else %}text-zinc-600{% endif %}">
-            {% if lb.position_trend == 'up' %}▲{% elif lb.position_trend == 'down' %}▼{% else %}—{% endif %}
-        </span>
+        {% if has_live %}
+            <span class="text-green-400">{{ forloop.counter }}</span>
+        {% else %}
+            {{ lb.position }}
+            <span class="text-xs ml-0.5
+                {% if lb.position_trend == 'up' %}text-orange-400
+                {% elif lb.position_trend == 'down' %}text-rose-500
+                {% else %}text-zinc-600{% endif %}">
+                {% if lb.position_trend == 'up' %}▲{% elif lb.position_trend == 'down' %}▼{% else %}—{% endif %}
+            </span>
+        {% endif %}
     </td>
     <td class="px-4 py-3">
         <a href="{% url 'core:profile' lb.user.username %}"
@@ -17,6 +21,16 @@
         </a>
     </td>
     <td class="px-4 py-3 text-center font-bold text-lg">{{ lb.total_points }}</td>
+    {% if has_live %}
+    <td class="px-4 py-3 text-center font-bold text-green-400">
+        {% if lb.live_bonus %}
+            {{ lb.live_total }}
+            <span class="text-xs font-normal text-green-600 ml-0.5">(+{{ lb.live_bonus }})</span>
+        {% else %}
+            <span class="text-zinc-600">—</span>
+        {% endif %}
+    </td>
+    {% endif %}
     <td class="px-4 py-3 text-center text-orange-400 font-medium">{{ lb.exact_hits }}</td>
     <td class="px-4 py-3 text-center text-amber-400 font-medium hidden sm:table-cell">{{ lb.direction_hits }}</td>
     <td class="px-4 py-3 text-center text-violet-400 hidden md:table-cell">{{ lb.special_points }}</td>

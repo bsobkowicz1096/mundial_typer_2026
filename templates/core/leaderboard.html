@@ -8,9 +8,12 @@
     <table class="w-full text-sm">
         <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
             <tr>
-                <th class="px-4 py-3 text-center w-12">#</th>
+                <th class="px-4 py-3 text-center w-12">{% if has_live %}#~{% else %}#{% endif %}</th>
                 <th class="px-4 py-3 text-left">Gracz</th>
                 <th class="px-4 py-3 text-center">Pkt</th>
+                {% if has_live %}
+                <th class="px-4 py-3 text-center text-green-400" title="Hipotetyczne punkty jeśli mecze zakończą się bieżącym wynikiem">LIVE</th>
+                {% endif %}
                 <th class="px-4 py-3 text-center text-orange-400" title="Dokładne wyniki">3 pkt</th>
                 <th class="px-4 py-3 text-center text-amber-400 hidden sm:table-cell" title="Trafione kierunki">1 pkt</th>
                 <th class="px-4 py-3 text-center text-violet-400 hidden md:table-cell" title="Zakłady dodatkowe">Spec</th>

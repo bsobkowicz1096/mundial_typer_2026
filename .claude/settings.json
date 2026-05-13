@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"cd c:\\\\Users\\\\barto\\\\GitHub\\\\mundial_typer_2026 && venv\\\\Scripts\\\\python.exe manage.py test core --verbosity=2\")",
+      "Bash(powershell -Command \"& 'c:\\\\Users\\\\barto\\\\GitHub\\\\mundial_typer_2026\\\\venv\\\\Scripts\\\\python.exe' 'c:\\\\Users\\\\barto\\\\GitHub\\\\mundial_typer_2026\\\\manage.py' test core --verbosity=2 2>&1\")",
+      "Bash(powershell -Command \"Get-Item 'C:\\\\Users\\\\barto\\\\Downloads\\\\all_matches.csv' | Select-Object Name, Length, LastWriteTime; \\(Get-Content 'C:\\\\Users\\\\barto\\\\Downloads\\\\all_matches.csv' -TotalCount 3\\)\")",
+      "Bash(powershell -Command ' *)",
+      "Bash(Select-String -Pattern \"jupyter|ipykernel|notebook\")",
+      "Bash(jupyter kernelspec *)",
+      "Bash(venv\\\\Scripts\\\\python.exe -m pip install numpy pandas matplotlib)",
+      "Bash(venv/Scripts/python.exe -m pip install numpy pandas matplotlib)",
+      "Bash(venv/Scripts/python.exe -m pip install scipy)",
+      "Bash(venv/Scripts/python.exe -c ' *)",
+      "Bash(cp \"C:/Users/barto/Downloads/goalscorers.csv\" \"C:/Users/barto/GitHub/mundial_typer_2026/notebooks/data/goalscorers.csv\" && echo \"done\")",
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:football-observatory.com)",
+      "WebFetch(domain:www.sportshistori.com)",
+      "WebFetch(domain:grokipedia.com)",
+      "WebFetch(domain:www.planetworldcup.com)",
+      "WebFetch(domain:docs.google.com)",
+      "WebFetch(domain:doc-0g-30-sheets.googleusercontent.com)",
+      "WebFetch(domain:doc-00-30-sheets.googleusercontent.com)",
+      "Bash(curl -s -H \"X-Auth-Token: a673553c58ae44bb88a5113e0b8d8f68\" \"https://api.football-data.org/v4/competitions/PL/scorers?season=2025&limit=20\")",
+      "WebFetch(domain:theanalyst.com)",
+      "Bash(venv/Scripts/python manage.py shell -c ' *)",
+      "Bash(venv/Scripts/python manage.py makemigrations core)",
+      "Bash(venv/Scripts/python manage.py run_simulation --n-sims 500)",
+      "Bash(venv/Scripts/python manage.py runserver)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/)",
+      "Bash(venv/Scripts/python manage.py run_simulation --n-sims 300 --n-typer-sims 300)",
+      "Bash(venv/Scripts/python manage.py run_simulation --n-sims 300 --n-typer-sims 500)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\barto\\Downloads"
+    ]
+  }
+}
