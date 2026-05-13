@@ -1,0 +1,19 @@
+[Unit]
+Description=Mundial Typer — Gunicorn
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/mundial_typer
+ExecStart=/var/www/mundial_typer/venv/bin/gunicorn \
+    --workers 3 \
+    --bind unix:/run/mundial_typer.sock \
+    mundial_typer.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+EnvironmentFile=/var/www/mundial_typer/.env
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

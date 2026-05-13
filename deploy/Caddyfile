@@ -1,0 +1,7 @@
+typer.mundial2026.pl {
+    reverse_proxy unix//run/mundial_typer.sock
+
+    encode gzip
+
+    # Static files serwuje whitenoise przez Django — brak osobnego bloku
+}
