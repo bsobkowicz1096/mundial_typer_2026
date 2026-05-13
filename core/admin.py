@@ -2,7 +2,7 @@ import uuid
 
 from django.contrib import admin, messages
 
-from .models import Bet, InviteCode, Leaderboard, Match, Player, SpecialBet, SpecialQuestion, Team
+from .models import Bet, InviteCode, Leaderboard, Match, Player, SimulationSnapshot, SpecialBet, SpecialQuestion, Team
 from .scoring import apply_match_results, apply_special_results
 
 
@@ -94,6 +94,19 @@ class LeaderboardAdmin(admin.ModelAdmin):
     list_display = ["position", "user", "total_points", "match_points", "special_points", "exact_hits", "direction_hits"]
     ordering = ["position"]
     readonly_fields = ["position", "prev_position", "updated_at"]
+
+
+@admin.register(SimulationSnapshot)
+class SimulationSnapshotAdmin(admin.ModelAdmin):
+    list_display = ["__str__", "n_simulations", "created_at"]
+    readonly_fields = ["created_at", "n_simulations", "data"]
+    actions = ["run_new_simulation"]
+
+    @admin.action(description="Uruchom nową symulację Monte Carlo")
+    def run_new_simulation(self, request, queryset):
+        from django.core.management import call_command
+        call_command("run_simulation")
+        self.message_user(request, "Symulacja zakończona — nowy snapshot zapisany.", messages.SUCCESS)
 
 
 @admin.register(InviteCode)

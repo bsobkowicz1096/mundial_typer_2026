@@ -40,6 +40,9 @@ desktop.ini
 # Claude Code local settings
 .claude/settings.local.json
 
+# Dane treningowe do notebooków (duże pliki CSV)
+notebooks/data/
+
 # Coverage / testing
 .coverage
 htmlcov/

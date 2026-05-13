@@ -16,4 +16,7 @@ urlpatterns = [
     path("leaderboard/", views.leaderboard, name="leaderboard"),
     path("ajax/players/<int:team_id>/", views.players_by_team, name="players_by_team"),
     path("profile/<str:username>/", views.profile, name="profile"),
+    path("analytics/", views.analytics_dashboard, name="analytics"),
+    path("special-bets/overview/", views.special_bets_overview, name="special_bets_overview"),
+    path("typy/", views.match_bets_overview, name="match_bets_overview"),
 ]

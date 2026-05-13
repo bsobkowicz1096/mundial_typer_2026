@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Typy — Mundial 2026{% endblock %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">Typy na mecze</h1>
+
+{% if not matchdays %}
+<div class="bg-zinc-900 rounded-lg p-6 text-zinc-400 text-sm">
+    Brak zamkniętych meczów — typy pojawią się tutaj po zamknięciu okna obstawiania.
+</div>
+{% else %}
+
+<div class="flex gap-6 items-start">
+
+    {# ── Boczna nawigacja po dniach ─────────────────────────────────────── #}
+    <nav class="flex-shrink-0 w-44 bg-zinc-900 rounded-lg overflow-hidden">
+        <div class="px-3 py-2 text-xs text-zinc-500 uppercase tracking-wide border-b border-zinc-800">Dzień</div>
+        {% for md in matchdays %}
+        <a href="?dzien={{ md.key|date:'Y-m-d' }}"
+           class="block px-3 py-2 text-sm border-b border-zinc-800 transition-colors
+               {% if md.key == selected_key %}bg-orange-500 text-white font-semibold
+               {% else %}text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100{% endif %}">
+            {{ md.label }}
+        </a>
+        {% endfor %}
+    </nav>
+
+    {# ── Tabela ─────────────────────────────────────────────────────────── #}
+    <div class="flex-1 overflow-x-auto">
+    <table class="text-base border-separate border-spacing-0" id="bets-table">
+        <thead class="bg-zinc-950 text-xs text-zinc-500 uppercase tracking-wide">
+            <tr>
+                <th class="px-6 py-3 text-left sticky left-0 bg-zinc-950 z-10 border-b border-zinc-800 whitespace-nowrap">
+                    Uczestnik
+                </th>
+                {% for m in matches %}
+                <th class="px-4 py-2 text-center border-b border-zinc-800 border-l border-zinc-800 whitespace-nowrap min-w-[120px]">
+                    <div class="font-mono text-zinc-200 text-sm">{{ m.home_team.code }}–{{ m.away_team.code }}</div>
+                    <div class="text-zinc-600 normal-case font-normal text-xs">{{ m.match_date|date:"H:i" }}</div>
+                    {% if m.is_finished %}
+                    <div class="text-orange-400 font-bold text-sm mt-0.5">{{ m.home_score }}:{{ m.away_score }}</div>
+                    {% else %}
+                    <div class="text-zinc-700 text-xs mt-0.5">w trakcie</div>
+                    {% endif %}
+
+                    {# Filtry kierunku #}
+                    <div class="flex gap-1 justify-center mt-2 normal-case font-normal">
+                        <button onclick="setFilter({{ m.id }}, 'H', this)"
+                                class="filter-dir px-1.5 py-0.5 rounded text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 transition-colors">
+                            {{ m.home_team.code }}
+                        </button>
+                        <button onclick="setFilter({{ m.id }}, 'X', this)"
+                                class="filter-dir px-1.5 py-0.5 rounded text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 transition-colors">
+                            REM
+                        </button>
+                        <button onclick="setFilter({{ m.id }}, 'A', this)"
+                                class="filter-dir px-1.5 py-0.5 rounded text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 transition-colors">
+                            {{ m.away_team.code }}
+                        </button>
+                    </div>
+
+                    {# Filtr dokładnego wyniku #}
+                    <div class="mt-1.5 normal-case font-normal">
+                        <input type="text" placeholder="np. 1:2"
+                               oninput="setScoreFilter({{ m.id }}, this.value)"
+                               class="w-full text-center text-xs bg-zinc-800 border border-zinc-700 rounded px-1 py-0.5
+                                      text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-orange-500">
+                    </div>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="bets-body">
+            {% for row in rows %}
+            <tr class="border-b border-zinc-800 hover:bg-zinc-800/40 transition-colors
+                {% if row.user == request.user %}bg-zinc-800/20{% endif %}">
+                <td class="px-6 py-3 font-semibold sticky left-0 bg-zinc-950 z-10 border-r border-zinc-800 whitespace-nowrap
+                    {% if row.user == request.user %}text-orange-400{% else %}text-zinc-200{% endif %}">
+                    {{ row.user.username }}
+                </td>
+                {% for m, bet in row.match_bets %}
+                <td class="px-4 py-3 text-center font-mono border-l border-zinc-800 text-base"
+                    data-mid="{{ m.id }}"
+                    data-score="{% if bet %}{{ bet.home_score }}:{{ bet.away_score }}{% endif %}"
+                    data-dir="{% if bet %}{% if bet.home_score > bet.away_score %}H{% elif bet.home_score < bet.away_score %}A{% else %}X{% endif %}{% endif %}">
+                    {% if bet %}
+                    <span class="{% if bet.points == 3 %}text-green-400 font-bold
+                                 {% elif bet.points == 1 %}text-yellow-400
+                                 {% elif bet.points == 0 %}text-zinc-600
+                                 {% else %}text-zinc-300{% endif %}">
+                        {{ bet.home_score }}:{{ bet.away_score }}
+                    </span>
+                    {% else %}
+                    <span class="text-zinc-700">–</span>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+</div>
+
+<script>
+const filters = {};  // { matchId: { dir: null|'H'|'X'|'A', score: '' } }
+
+function getFilter(mid) {
+    if (!filters[mid]) filters[mid] = { dir: null, score: '' };
+    return filters[mid];
+}
+
+function setFilter(mid, dir, btn) {
+    const f = getFilter(mid);
+    const siblings = btn.closest('div').querySelectorAll('.filter-dir');
+    if (f.dir === dir) {
+        f.dir = null;
+        siblings.forEach(b => b.classList.remove('bg-orange-500', 'text-white'));
+    } else {
+        f.dir = dir;
+        siblings.forEach(b => {
+            const active = b === btn;
+            b.classList.toggle('bg-orange-500', active);
+            b.classList.toggle('text-white', active);
+            b.classList.toggle('bg-zinc-800', !active);
+            b.classList.toggle('text-zinc-400', !active);
+        });
+    }
+    applyFilters();
+}
+
+function setScoreFilter(mid, val) {
+    getFilter(mid).score = val.trim();
+    applyFilters();
+}
+
+function applyFilters() {
+    const rows = document.querySelectorAll('#bets-body tr');
+    rows.forEach(row => {
+        let visible = true;
+        const cells = row.querySelectorAll('td[data-mid]');
+        for (const cell of cells) {
+            const mid   = cell.dataset.mid;
+            const f     = filters[mid];
+            if (!f || (!f.dir && !f.score)) continue;
+            if (f.score && cell.dataset.score !== f.score) { visible = false; break; }
+            if (f.dir   && cell.dataset.dir   !== f.dir)   { visible = false; break; }
+        }
+        row.style.opacity = visible ? '1' : '0.12';
+    });
+}
+</script>
+
+{% endif %}
+{% endblock %}

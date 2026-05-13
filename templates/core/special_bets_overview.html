@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Zakłady dodatkowe — przegląd{% endblock %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-4">Zakłady dodatkowe — co kto obstawił</h1>
+
+{% if not rows %}
+<div class="bg-zinc-900 rounded-lg p-6 text-zinc-400 text-sm">Brak zakładów.</div>
+{% else %}
+
+{# ── Legenda pytań ────────────────────────────────────────────────────────── #}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
+    {% for q in questions %}
+    <div class="bg-zinc-900 rounded px-3 py-2 text-xs">
+        <span class="font-bold text-orange-400 mr-1">Q{{ forloop.counter }}</span>
+        <span class="text-zinc-500 uppercase mr-1">{{ q.answer_type }}</span>
+        <span class="text-zinc-300">{{ q.text }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+{# ── Tabela: wiersze = typerzy, kolumny = pytania ─────────────────────────── #}
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+    <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
+        <tr>
+            <th class="px-4 py-3 text-left sticky left-0 bg-zinc-950 z-10">Uczestnik</th>
+            {% for q in questions %}
+            <th class="px-3 py-3 text-center whitespace-nowrap">Q{{ forloop.counter }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-zinc-800">
+        {% for row in rows %}
+        <tr class="hover:bg-zinc-800/50 transition-colors
+            {% if row.user == request.user %}bg-zinc-800/30{% endif %}">
+            <td class="px-4 py-2 font-medium sticky left-0 bg-zinc-950 z-10
+                {% if row.user == request.user %}text-orange-400{% else %}text-zinc-200{% endif %}">
+                {{ row.user.username }}
+            </td>
+            {% for bet in row.bets %}
+            <td class="px-3 py-2 text-center">
+                {% if bet %}
+                    {% if bet.answer_player %}
+                        <span class="text-zinc-100 whitespace-nowrap">{{ bet.answer_player.name }}</span>
+                        <span class="text-zinc-600 text-xs ml-0.5">{{ bet.answer_player.team.code }}</span>
+                    {% elif bet.answer_team %}
+                        <span class="font-mono text-amber-400">{{ bet.answer_team.code }}</span>
+                    {% elif bet.answer_number is not None %}
+                        <span class="font-mono text-amber-400">{{ bet.answer_number }}</span>
+                    {% else %}
+                        <span class="text-zinc-600">—</span>
+                    {% endif %}
+                    {% if bet.points is not None %}
+                        <span class="block text-xs font-bold mt-0.5
+                            {% if bet.points > 0 %}text-green-400{% else %}text-zinc-600{% endif %}">
+                            +{{ bet.points }}
+                        </span>
+                    {% endif %}
+                {% else %}
+                    <span class="text-zinc-700">–</span>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endif %}
+{% endblock %}

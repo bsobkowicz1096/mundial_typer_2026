@@ -179,6 +179,23 @@ class Leaderboard(models.Model):
         return "same"
 
 
+class SimulationSnapshot(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    n_simulations = models.IntegerField()
+    data = models.JSONField()
+
+    class Meta:
+        ordering = ["-created_at"]
+        get_latest_by = "created_at"
+
+    def __str__(self):
+        return f"Snapshot {self.created_at:%Y-%m-%d %H:%M} ({self.n_simulations:,} sims)"
+
+    @classmethod
+    def latest(cls):
+        return cls.objects.first()
+
+
 class InviteCode(models.Model):
     code = models.CharField(max_length=20, unique=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_invites")
