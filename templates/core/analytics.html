@@ -3,17 +3,17 @@
 {% block content %}
 
 {% if not snapshot %}
-<div class="bg-zinc-900 rounded-lg p-6 text-zinc-400 text-sm">
-    Brak danych — uruchom: <code class="bg-zinc-800 px-1 rounded">python manage.py run_simulation</code>
+<div class="bg-[#231E30] rounded-lg p-6 text-zinc-400 text-sm">
+    Brak danych — uruchom: <code class="bg-[#2e2842] px-1 rounded">python manage.py run_simulation</code>
     lub przez admin → SimulationSnapshot → akcja.
 </div>
 {% else %}
 
 {# ── Zakładki ────────────────────────────────────────────────────────────── #}
 {% with has_pechowcy=pechowcy_80|default:pechowcy_90 %}
-<div class="flex gap-1 mb-4 border-b border-zinc-800">
+<div class="flex gap-1 mb-4 border-b border-[#2e2842]">
     <button id="tab-szanse" onclick="switchTab('szanse')"
-            class="tab-btn px-4 py-2 text-sm font-medium rounded-t border-b-2 border-orange-500 text-orange-400">
+            class="tab-btn px-4 py-2 text-sm font-medium rounded-t border-b-2 border-[#C4B5FD] text-[#C4B5FD]">
         Szanse na wygraną
     </button>
     {% if has_pechowcy %}
@@ -28,28 +28,28 @@
 {# ── Panel: Szanse na wygraną ────────────────────────────────────────────── #}
 <div id="panel-szanse">
 {% if typers %}
-<div class="bg-zinc-900 rounded-lg shadow overflow-hidden mb-3">
+<div class="bg-[#231E30] rounded-lg shadow overflow-hidden mb-3">
     <table class="w-full text-sm">
-        <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
+        <thead class="bg-[#1A1625] border-b border-[#2e2842] text-xs text-zinc-500 uppercase tracking-wide">
             <tr>
                 <th class="px-4 py-3 text-center w-8">#</th>
                 <th class="px-4 py-3 text-left">Uczestnik</th>
                 <th class="px-4 py-3 text-center text-zinc-400 hidden sm:table-cell">Pkt</th>
-                <th class="px-4 py-3 text-center text-orange-400">P(win)</th>
+                <th class="px-4 py-3 text-center text-[#C4B5FD]">P(win)</th>
                 <th class="px-4 py-3 text-center text-amber-400">P(top 3)</th>
                 <th class="px-4 py-3 text-center text-yellow-300 hidden sm:table-cell">P(top 5)</th>
                 <th class="px-4 py-3 text-center text-zinc-300 hidden md:table-cell">P(top 10)</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-zinc-800">
+        <tbody class="divide-y divide-[#2e2842]">
             {% for t in typers %}
-            <tr class="hover:bg-zinc-800 transition-colors {% if t.username == user.username %}bg-zinc-800/50{% endif %}">
+            <tr class="hover:bg-[#2e2842] transition-colors {% if t.username == user.username %}bg-[#2e2842]/50{% endif %}">
                 <td class="px-4 py-2 text-center text-zinc-500 text-xs">{{ forloop.counter }}</td>
-                <td class="px-4 py-2 font-medium {% if t.username == user.username %}text-orange-400{% endif %}">
+                <td class="px-4 py-2 font-medium {% if t.username == user.username %}text-[#C4B5FD]{% endif %}">
                     {{ t.username }}
                 </td>
                 <td class="px-4 py-2 text-center text-zinc-400 hidden sm:table-cell">{{ t.score }}</td>
-                <td class="px-4 py-2 text-center font-mono font-semibold text-orange-400">{{ t.p_win }}%</td>
+                <td class="px-4 py-2 text-center font-mono font-semibold text-[#C4B5FD]">{{ t.p_win }}%</td>
                 <td class="px-4 py-2 text-center font-mono text-amber-400">{{ t.p_top3 }}%</td>
                 <td class="px-4 py-2 text-center font-mono text-yellow-300 hidden sm:table-cell">{{ t.p_top5 }}%</td>
                 <td class="px-4 py-2 text-center font-mono text-zinc-300 hidden md:table-cell">{{ t.p_top10 }}%</td>
@@ -69,9 +69,9 @@
 <div id="panel-pechowcy" class="hidden">
 <div class="flex items-center justify-between mb-3">
     <h2 class="text-lg font-semibold">Tabela pechowców</h2>
-    <div class="flex rounded-lg overflow-hidden border border-zinc-700 text-sm">
+    <div class="flex rounded-lg overflow-hidden border border-[#2e2842] text-sm">
         <button id="toggle-80" onclick="switchThreshold(80)"
-                class="px-3 py-1 bg-orange-500 text-white font-medium">
+                class="px-3 py-1 bg-[#7C3AED] text-white font-medium">
             Po 80'
         </button>
         <button id="toggle-90" onclick="switchThreshold(90)"
@@ -109,11 +109,11 @@ function switchTab(name) {
         if (!panel || !btn) return;
         if (t === name) {
             panel.classList.remove('hidden');
-            btn.classList.add('border-orange-500', 'text-orange-400');
+            btn.classList.add('border-[#C4B5FD]', 'text-[#C4B5FD]');
             btn.classList.remove('border-transparent', 'text-zinc-400');
         } else {
             panel.classList.add('hidden');
-            btn.classList.remove('border-orange-500', 'text-orange-400');
+            btn.classList.remove('border-[#C4B5FD]', 'text-[#C4B5FD]');
             btn.classList.add('border-transparent', 'text-zinc-400');
         }
     });
@@ -131,11 +131,11 @@ function switchThreshold(min) {
         if (!table || !btn) return;
         if (t === min) {
             table.classList.remove('hidden');
-            btn.classList.add('bg-orange-500', 'text-white');
+            btn.classList.add('bg-[#7C3AED]', 'text-white');
             btn.classList.remove('text-zinc-400');
         } else {
             table.classList.add('hidden');
-            btn.classList.remove('bg-orange-500', 'text-white');
+            btn.classList.remove('bg-[#7C3AED]', 'text-white');
             btn.classList.add('text-zinc-400');
         }
     });

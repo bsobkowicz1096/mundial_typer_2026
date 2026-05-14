@@ -11,15 +11,15 @@
 <div class="space-y-4">
 {% for item in items %}
     {% with q=item.question bet=item.existing %}
-    <div class="bg-zinc-900 rounded-lg shadow p-5">
+    <div class="bg-[#231E30] rounded-lg shadow p-5">
 
         <!-- Nagłówek pytania -->
         <div class="flex items-start justify-between gap-4 mb-3">
             <p class="font-medium text-zinc-100">{{ q.text }}</p>
             {% if q.is_resolved %}
-                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-zinc-800 text-zinc-400">Rozstrzygnięte</span>
+                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-[#2e2842] text-zinc-400">Rozstrzygnięte</span>
             {% elif bet %}
-                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-violet-900 text-violet-300">Obstawione</span>
+                <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-[#2D1B69] text-[#C4B5FD]">Obstawione</span>
             {% else %}
                 <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded bg-amber-950 text-amber-400">Brak zakładu</span>
             {% endif %}
@@ -36,7 +36,7 @@
                 </strong>
                 {% if bet %}
                     —
-                    {% if bet.points == 2 %}<span class="text-orange-400 font-semibold">+2 pkt ✓</span>
+                    {% if bet.points == 2 %}<span class="text-[#C4B5FD] font-semibold">+2 pkt ✓</span>
                     {% else %}<span class="text-zinc-600">0 pkt</span>{% endif %}
                 {% endif %}
             </div>
@@ -70,10 +70,10 @@
                         <input type="number" name="answer_number" min="0" max="500"
                                value="{{ bet.answer_number|default:'' }}"
                                required
-                               class="w-32 border border-zinc-700 rounded px-3 py-2 text-sm bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                               class="w-32 border border-[#2e2842] rounded px-3 py-2 text-sm bg-[#2e2842] text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]">
                         <button type="submit"
                                 class="shrink-0 text-white px-4 py-2 rounded text-sm font-medium
-                                    {% if bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-orange-500{% endif %}">
+                                    {% if bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-[#7C3AED]{% endif %}">
                             {% if bet %}Zmień{% else %}Zapisz{% endif %}
                         </button>
                     </div>
@@ -81,13 +81,13 @@
                 {% elif q.answer_type == "TEAM" %}
                     <!-- Grid drużyn z flagami -->
                     <p class="text-xs text-zinc-400 mb-2">Wybierz drużynę:</p>
-                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-1 max-h-52 overflow-y-auto rounded border border-zinc-800 p-2">
+                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-1 max-h-52 overflow-y-auto rounded border border-[#2e2842] p-2">
                         {% for team in teams %}
                         <button type="button"
                                 onclick="selectTeam(this, 'team_{{ q.id }}', '{{ team.id }}')"
                                 data-team-id="{{ team.id }}"
-                                class="team-tile flex flex-col items-center p-1 rounded border text-xs cursor-pointer hover:border-orange-500 hover:bg-orange-950 transition-colors
-                                       {% if bet.answer_team_id == team.id %}border-orange-500 bg-orange-900{% else %}border-transparent{% endif %}">
+                                class="team-tile flex flex-col items-center p-1 rounded border text-xs cursor-pointer hover:border-[#C4B5FD] hover:bg-orange-950 transition-colors
+                                       {% if bet.answer_team_id == team.id %}border-[#C4B5FD] bg-orange-900{% else %}border-transparent{% endif %}">
                             {% if team.flag %}
                                 {% with "flags/"|add:team.flag as fp %}
                                 <img src="{% static fp %}" class="w-6 h-4 object-contain">
@@ -101,14 +101,14 @@
                            value="{{ bet.answer_team_id|default:'' }}">
                     <button type="submit"
                             class="mt-3 text-white px-4 py-2 rounded text-sm font-medium
-                                {% if bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-orange-500{% endif %}">
+                                {% if bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-[#7C3AED]{% endif %}">
                         {% if bet %}Zmień{% else %}Zapisz{% endif %}
                     </button>
 
                 {% else %}
                     <!-- PLAYER: grid drużyn → htmx ładuje zawodników -->
                     <p class="text-xs text-zinc-400 mb-2">Wybierz drużynę:</p>
-                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-1 max-h-52 overflow-y-auto rounded border border-zinc-800 p-2">
+                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-1 max-h-52 overflow-y-auto rounded border border-[#2e2842] p-2">
                         {% for team in teams %}
                         <button type="button"
                                 hx-get="{% url 'core:players_by_team' team.id %}?q={{ q.id }}&selected={{ bet.answer_player_id|default:'' }}"
@@ -116,8 +116,8 @@
                                 hx-swap="innerHTML"
                                 onclick="selectTeam(this, '_team_sel_{{ q.id }}', '{{ team.id }}')"
                                 data-team-id="{{ team.id }}"
-                                class="team-tile flex flex-col items-center p-1 rounded border text-xs cursor-pointer hover:border-orange-500 hover:bg-orange-950 transition-colors
-                                       {% if item.selected_team_id == team.id|stringformat:'s' %}border-orange-500 bg-orange-900{% else %}border-transparent{% endif %}">
+                                class="team-tile flex flex-col items-center p-1 rounded border text-xs cursor-pointer hover:border-[#C4B5FD] hover:bg-orange-950 transition-colors
+                                       {% if item.selected_team_id == team.id|stringformat:'s' %}border-[#C4B5FD] bg-orange-900{% else %}border-transparent{% endif %}">
                             {% if team.flag %}
                                 {% with "flags/"|add:team.flag as fp %}
                                 <img src="{% static fp %}" class="w-6 h-4 object-contain">
@@ -132,7 +132,7 @@
                     <div id="players_{{ q.id }}">
                         {% if item.preloaded_players %}
                         <select name="answer_player" id="answer_player_{{ q.id }}"
-                                class="w-full border border-zinc-700 rounded px-3 py-2 text-sm bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500 mt-2">
+                                class="w-full border border-[#2e2842] rounded px-3 py-2 text-sm bg-[#2e2842] text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] mt-2">
                             <option value="">— wybierz zawodnika —</option>
                             {% for player in item.preloaded_players %}
                             <option value="{{ player.id }}" {% if bet.answer_player_id == player.id %}selected{% endif %}>
@@ -147,7 +147,7 @@
 
                     <button type="submit"
                             class="mt-3 text-white px-4 py-2 rounded text-sm font-medium
-                                {% if bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-orange-500{% endif %}">
+                                {% if bet %}bg-rose-700 hover:bg-rose-600{% else %}bg-orange-600 hover:bg-[#7C3AED]{% endif %}">
                         {% if bet %}Zmień{% else %}Zapisz{% endif %}
                     </button>
                 {% endif %}
@@ -164,11 +164,11 @@
 function selectTeam(btn, inputId, teamId) {
     const grid = btn.closest('.grid');
     grid.querySelectorAll('.team-tile').forEach(b => {
-        b.classList.remove('border-orange-500', 'bg-orange-900');
+        b.classList.remove('border-[#C4B5FD]', 'bg-orange-900');
         b.classList.add('border-transparent');
     });
     btn.classList.remove('border-transparent');
-    btn.classList.add('border-orange-500', 'bg-orange-900');
+    btn.classList.add('border-[#C4B5FD]', 'bg-orange-900');
     const input = document.getElementById(inputId);
     if (input) input.value = teamId;
 }

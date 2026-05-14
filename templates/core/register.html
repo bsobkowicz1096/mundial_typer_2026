@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Rejestracja — Mundial 2026{% endblock %}
 {% block content %}
-<div class="max-w-sm mx-auto mt-10 bg-zinc-900 p-8 rounded-lg shadow">
+<div class="max-w-sm mx-auto mt-10 bg-[#231E30] p-8 rounded-lg shadow">
     <h1 class="text-2xl font-bold mb-6 text-center">Rejestracja</h1>
     <form method="post" class="space-y-4">
         {% csrf_token %}
@@ -13,12 +13,12 @@
                 {% if field.help_text %}<p class="text-zinc-500 text-xs mt-1">{{ field.help_text }}</p>{% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-500 font-medium">
+        <button type="submit" class="w-full bg-orange-600 text-white py-2 rounded hover:bg-[#7C3AED] font-medium">
             Zarejestruj się
         </button>
     </form>
     <p class="text-center text-sm mt-4 text-zinc-500">
-        Masz już konto? <a href="{% url 'core:login' %}" class="hover:underline text-orange-400">Zaloguj się</a>
+        Masz już konto? <a href="{% url 'core:login' %}" class="hover:underline text-[#C4B5FD]">Zaloguj się</a>
     </p>
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Logowanie — Mundial 2026{% endblock %}
 {% block content %}
-<div class="max-w-sm mx-auto mt-10 bg-zinc-900 p-8 rounded-lg shadow">
+<div class="max-w-sm mx-auto mt-10 bg-[#231E30] p-8 rounded-lg shadow">
     <h1 class="text-2xl font-bold mb-6 text-center">Logowanie</h1>
     <form method="post" class="space-y-4">
         {% csrf_token %}
@@ -12,7 +12,7 @@
                 {% if field.errors %}<p class="text-red-400 text-sm mt-1">{{ field.errors.0 }}</p>{% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-500 font-medium">
+        <button type="submit" class="w-full bg-orange-600 text-white py-2 rounded hover:bg-[#7C3AED] font-medium">
             Zaloguj
         </button>
     </form>

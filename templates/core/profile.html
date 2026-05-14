@@ -19,10 +19,10 @@
 </div>
 
 <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Historia typów</h2>
-<div class="bg-zinc-900 rounded-lg shadow overflow-hidden">
+<div class="bg-[#231E30] rounded-lg shadow overflow-hidden">
     {% if bets %}
         <table class="w-full text-sm">
-            <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
+            <thead class="bg-[#1A1625] border-b border-[#2e2842] text-xs text-zinc-500 uppercase tracking-wide">
                 <tr>
                     <th class="px-4 py-3 text-left">Mecz</th>
                     <th class="px-4 py-3 text-center">Typ</th>
@@ -32,7 +32,7 @@
             </thead>
             <tbody>
                 {% for bet in bets %}
-                <tr class="border-b border-zinc-800 hover:bg-zinc-800">
+                <tr class="border-b border-[#2e2842] hover:bg-[#2e2842]">
                     <td class="px-4 py-3">
                         <div class="font-medium">{{ bet.match.home_team.name }} vs {{ bet.match.away_team.name }}</div>
                         <div class="text-xs text-zinc-500">{{ bet.match.match_date|date:"j E Y" }}</div>
@@ -49,7 +49,7 @@
                     </td>
                     <td class="px-4 py-3 text-center font-semibold">
                         {% if bet.points is not None %}
-                            <span class="{% if bet.points == 3 %}text-orange-400{% elif bet.points == 1 %}text-amber-400{% else %}text-zinc-600{% endif %}">
+                            <span class="{% if bet.points == 3 %}text-[#C4B5FD]{% elif bet.points == 1 %}text-amber-400{% else %}text-zinc-600{% endif %}">
                                 {{ bet.points }}
                             </span>
                         {% else %}

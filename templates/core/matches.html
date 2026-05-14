@@ -6,12 +6,12 @@
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold">Mecze</h1>
     {% if user_rank %}
-        <span class="text-sm text-zinc-400">Twoja pozycja: <strong class="text-orange-400">#{{ user_rank.position }}</strong> ({{ user_rank.total_points }} pkt)</span>
+        <span class="text-sm text-zinc-400">Twoja pozycja: <strong class="text-[#C4B5FD]">#{{ user_rank.position }}</strong> ({{ user_rank.total_points }} pkt)</span>
     {% endif %}
 </div>
 
 {% if not grouped_matches %}
-    <div class="bg-zinc-900 rounded-lg shadow p-8 text-center text-zinc-500">
+    <div class="bg-[#231E30] rounded-lg shadow p-8 text-center text-zinc-500">
         Terminarz zostanie załadowany przed turniejem.
     </div>
 {% endif %}
@@ -21,10 +21,10 @@
     <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">
         {{ date|date:"l, j E Y" }}
     </h2>
-    <div class="bg-zinc-900 rounded-lg shadow overflow-hidden">
+    <div class="bg-[#231E30] rounded-lg shadow overflow-hidden">
         {% for match in day_matches %}
-        <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-zinc-800{% endif %}
-                    {% if match.is_finished %}bg-zinc-950{% endif %}">
+        <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-[#2e2842]{% endif %}
+                    {% if match.is_finished %}bg-[#1A1625]{% endif %}">
 
             <!-- Czas i etap -->
             <div class="w-16 text-center shrink-0">

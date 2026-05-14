@@ -6,7 +6,7 @@
     <h1 class="text-2xl font-bold">Cześć, {{ user.username }}! 👋</h1>
     {% if user_rank %}
         <div class="text-right">
-            <div class="text-2xl font-bold text-orange-400">#{{ user_rank.position }}</div>
+            <div class="text-2xl font-bold text-[#C4B5FD]">#{{ user_rank.position }}</div>
             <div class="text-sm text-zinc-400">{{ user_rank.total_points }} pkt</div>
         </div>
     {% endif %}
@@ -17,10 +17,10 @@
     <!-- Najbliższe mecze -->
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Najbliższe mecze</h2>
-        <div class="bg-zinc-900 rounded-lg shadow overflow-hidden">
+        <div class="bg-[#231E30] rounded-lg shadow overflow-hidden">
             {% if upcoming %}
                 {% for match in upcoming %}
-                <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-zinc-800{% endif %}">
+                <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-[#2e2842]{% endif %}">
                     <div class="flex-1 min-w-0">
                         <div class="text-sm font-medium truncate">
                             {{ match.home_team.name }} vs {{ match.away_team.name }}
@@ -39,7 +39,7 @@
             {% endif %}
         </div>
         <div class="mt-2 text-right">
-            <a href="{% url 'core:match_list' %}" class="text-sm text-orange-400 hover:underline">
+            <a href="{% url 'core:match_list' %}" class="text-sm text-[#C4B5FD] hover:underline">
                 Wszystkie mecze →
             </a>
         </div>
@@ -48,15 +48,15 @@
     <!-- Top 5 -->
     <div>
         <h2 class="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Top 5</h2>
-        <div class="bg-zinc-900 rounded-lg shadow overflow-hidden">
+        <div class="bg-[#231E30] rounded-lg shadow overflow-hidden">
             {% if top5 %}
                 {% for lb in top5 %}
-                <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-zinc-800{% endif %}
-                            {% if lb.user == user %}bg-violet-950{% endif %}">
+                <div class="flex items-center px-4 py-3 {% if not forloop.last %}border-b border-[#2e2842]{% endif %}
+                            {% if lb.user == user %}bg-[#2D1B69]{% endif %}">
                     <div class="w-8 text-center font-bold text-zinc-500">{{ lb.position }}</div>
                     <div class="flex-1 ml-3">
                         <a href="{% url 'core:profile' lb.user.username %}"
-                           class="font-medium hover:text-orange-400">
+                           class="font-medium hover:text-[#C4B5FD]">
                             {{ lb.user.username }}
                             {% if lb.user == user %}<span class="text-xs text-zinc-500">(Ty)</span>{% endif %}
                         </a>
@@ -71,7 +71,7 @@
             {% endif %}
         </div>
         <div class="mt-2 text-right">
-            <a href="{% url 'core:leaderboard' %}" class="text-sm text-orange-400 hover:underline">
+            <a href="{% url 'core:leaderboard' %}" class="text-sm text-[#C4B5FD] hover:underline">
                 Pełna tabela →
             </a>
         </div>

@@ -1,7 +1,7 @@
 {% if rows %}
-<div class="bg-zinc-900 rounded-lg shadow overflow-hidden mb-4">
+<div class="bg-[#231E30] rounded-lg shadow overflow-hidden mb-4">
     <table class="w-full text-sm">
-        <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
+        <thead class="bg-[#1A1625] border-b border-[#2e2842] text-xs text-zinc-500 uppercase tracking-wide">
             <tr>
                 <th class="px-4 py-3 text-center w-8">#</th>
                 <th class="px-4 py-3 text-left">Uczestnik</th>
@@ -10,17 +10,17 @@
                 <th class="px-4 py-3 text-center" title="Różnica: pkt hipotetyczne minus rzeczywiste">Δ</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-zinc-800">
+        <tbody class="divide-y divide-[#2e2842]">
             {% for p in rows %}
-            <tr class="hover:bg-zinc-800 transition-colors {% if p.username == user.username %}bg-zinc-800/50{% endif %}">
+            <tr class="hover:bg-[#2e2842] transition-colors {% if p.username == user.username %}bg-[#2e2842]/50{% endif %}">
                 <td class="px-4 py-2 text-center text-zinc-500 text-xs">{{ p.hypo_pos }}</td>
-                <td class="px-4 py-2 font-medium {% if p.username == user.username %}text-orange-400{% endif %}">
+                <td class="px-4 py-2 font-medium {% if p.username == user.username %}text-[#C4B5FD]{% endif %}">
                     {{ p.username }}
                 </td>
                 <td class="px-4 py-2 text-center font-mono font-semibold">{{ p.hypo_pts }}</td>
                 <td class="px-4 py-2 text-center text-zinc-500 hidden sm:table-cell">{{ p.real_pts }}</td>
                 <td class="px-4 py-2 text-center font-mono font-semibold
-                    {% if p.delta > 0 %}text-red-400{% elif p.delta < 0 %}text-green-400{% else %}text-zinc-500{% endif %}">
+                    {% if p.delta > 0 %}text-red-400{% elif p.delta < 0 %}text-[#22C55E]{% else %}text-zinc-500{% endif %}">
                     {% if p.delta > 0 %}+{{ p.delta }}{% elif p.delta < 0 %}{{ p.delta }}{% else %}—{% endif %}
                 </td>
             </tr>
@@ -29,7 +29,7 @@
     </table>
 </div>
 {% else %}
-<div class="bg-zinc-900 rounded-lg p-6 text-zinc-500 text-sm mb-4">
+<div class="bg-[#231E30] rounded-lg p-6 text-zinc-500 text-sm mb-4">
     Brak danych — pojawi się po pierwszym zakończonym meczu.
 </div>
 {% endif %}
