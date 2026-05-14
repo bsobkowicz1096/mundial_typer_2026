@@ -57,6 +57,10 @@ class Match(models.Model):
     match_date = models.DateTimeField()
     home_score = models.PositiveIntegerField(blank=True, null=True)
     away_score = models.PositiveIntegerField(blank=True, null=True)
+    home_score_80 = models.PositiveIntegerField(blank=True, null=True)
+    away_score_80 = models.PositiveIntegerField(blank=True, null=True)
+    home_score_90 = models.PositiveIntegerField(blank=True, null=True)
+    away_score_90 = models.PositiveIntegerField(blank=True, null=True)
     is_finished = models.BooleanField(default=False)
 
     class Meta:

@@ -23,7 +23,7 @@ class PlayerAdmin(admin.ModelAdmin):
 
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "stage", "match_date", "home_score", "away_score", "is_finished"]
+    list_display = ["__str__", "stage", "match_date", "home_score", "away_score", "home_score_90", "away_score_90", "is_finished"]
     list_filter = ["stage", "is_finished", "group_label"]
     search_fields = ["home_team__name", "away_team__name", "home_team__code", "away_team__code"]
     readonly_fields = ["bet_deadline_display"]

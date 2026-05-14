@@ -20,8 +20,8 @@ class Command(BaseCommand):
         parser.add_argument(
             "--n-typer-sims",
             type=int,
-            default=5_000,
-            help="Number of typer simulation iterations (default: 5 000)",
+            default=10_000,
+            help="Number of typer simulation iterations (default: 10 000)",
         )
 
     def handle(self, *args, **options):

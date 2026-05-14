@@ -2,8 +2,6 @@
 {% block title %}Analizy MC — Mundial 2026{% endblock %}
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-2">Analizy Monte Carlo</h1>
-
 {% if not snapshot %}
 <div class="bg-zinc-900 rounded-lg p-6 text-zinc-400 text-sm">
     Brak danych — uruchom: <code class="bg-zinc-800 px-1 rounded">python manage.py run_simulation</code>
@@ -11,15 +9,26 @@
 </div>
 {% else %}
 
-<p class="text-xs text-zinc-500 mb-6">
-    {{ snapshot.n_simulations|floatformat:"0" }} symulacji ·
-    {{ snapshot.data.generated_at|slice:":16"|default:"—" }}
-</p>
+{# ── Zakładki ────────────────────────────────────────────────────────────── #}
+{% with has_pechowcy=pechowcy_80|default:pechowcy_90 %}
+<div class="flex gap-1 mb-4 border-b border-zinc-800">
+    <button id="tab-szanse" onclick="switchTab('szanse')"
+            class="tab-btn px-4 py-2 text-sm font-medium rounded-t border-b-2 border-orange-500 text-orange-400">
+        Szanse na wygraną
+    </button>
+    {% if has_pechowcy %}
+    <button id="tab-pechowcy" onclick="switchTab('pechowcy')"
+            class="tab-btn px-4 py-2 text-sm font-medium rounded-t border-b-2 border-transparent text-zinc-400 hover:text-zinc-200">
+        Tabela pechowców
+    </button>
+    {% endif %}
+</div>
+{% endwith %}
 
-{# ── Tabela typerów ──────────────────────────────────────────────────────── #}
+{# ── Panel: Szanse na wygraną ────────────────────────────────────────────── #}
+<div id="panel-szanse">
 {% if typers %}
-<h2 class="text-lg font-semibold mb-3">Szanse na wygraną — uczestnicy</h2>
-<div class="bg-zinc-900 rounded-lg shadow overflow-hidden mb-8">
+<div class="bg-zinc-900 rounded-lg shadow overflow-hidden mb-3">
     <table class="w-full text-sm">
         <thead class="bg-zinc-950 border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wide">
             <tr>
@@ -49,9 +58,93 @@
         </tbody>
     </table>
 </div>
+<p class="text-xs text-zinc-600 mb-6">
+    Ostatnia aktualizacja: {{ snapshot.data.generated_at|slice:":16"|default:"—" }}
+</p>
+{% endif %}
+</div>
+
+{# ── Panel: Tabela pechowców ─────────────────────────────────────────────── #}
+{% if pechowcy_80 or pechowcy_90 %}
+<div id="panel-pechowcy" class="hidden">
+<div class="flex items-center justify-between mb-3">
+    <h2 class="text-lg font-semibold">Tabela pechowców</h2>
+    <div class="flex rounded-lg overflow-hidden border border-zinc-700 text-sm">
+        <button id="toggle-80" onclick="switchThreshold(80)"
+                class="px-3 py-1 bg-orange-500 text-white font-medium">
+            Po 80'
+        </button>
+        <button id="toggle-90" onclick="switchThreshold(90)"
+                class="px-3 py-1 text-zinc-400 hover:text-zinc-200">
+            Po 90'
+        </button>
+    </div>
+</div>
+<p id="pechowcy-desc" class="text-xs text-zinc-500 mb-3"></p>
+
+{# Tabela 80' #}
+<div id="pechowcy-table-80">
+{% include "core/partials/pechowcy_table.html" with rows=pechowcy_80 %}
+</div>
+
+{# Tabela 90' #}
+<div id="pechowcy-table-90" class="hidden">
+{% include "core/partials/pechowcy_table.html" with rows=pechowcy_90 %}
+</div>
+
+<p class="text-xs text-zinc-600 mt-2 mb-4">
+    Δ &gt; 0 (czerwony) — pechowiec: straciłeś punkty przez późne bramki.<br>
+    Δ &lt; 0 (zielony) — szczęściarz: zyskałeś punkty dzięki późnym bramkom.
+</p>
+</div>
 {% endif %}
 
-
-
 {% endif %}
+
+<script>
+function switchTab(name) {
+    ['szanse', 'pechowcy'].forEach(function(t) {
+        var panel = document.getElementById('panel-' + t);
+        var btn   = document.getElementById('tab-' + t);
+        if (!panel || !btn) return;
+        if (t === name) {
+            panel.classList.remove('hidden');
+            btn.classList.add('border-orange-500', 'text-orange-400');
+            btn.classList.remove('border-transparent', 'text-zinc-400');
+        } else {
+            panel.classList.add('hidden');
+            btn.classList.remove('border-orange-500', 'text-orange-400');
+            btn.classList.add('border-transparent', 'text-zinc-400');
+        }
+    });
+}
+
+var _descs = {
+    80: 'Hipotetyczny ranking gdyby bramki po 80. minucie nie padły (gole w 81\'–90\' i doliczonym czasie).',
+    90: 'Hipotetyczny ranking gdyby bramki w doliczonym czasie 2. połowy nie padły (gole w 90+1\', 90+2\' itd.).'
+};
+
+function switchThreshold(min) {
+    [80, 90].forEach(function(t) {
+        var table  = document.getElementById('pechowcy-table-' + t);
+        var btn    = document.getElementById('toggle-' + t);
+        if (!table || !btn) return;
+        if (t === min) {
+            table.classList.remove('hidden');
+            btn.classList.add('bg-orange-500', 'text-white');
+            btn.classList.remove('text-zinc-400');
+        } else {
+            table.classList.add('hidden');
+            btn.classList.remove('bg-orange-500', 'text-white');
+            btn.classList.add('text-zinc-400');
+        }
+    });
+    var desc = document.getElementById('pechowcy-desc');
+    if (desc) desc.textContent = _descs[min] || '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    switchThreshold(80);
+});
+</script>
 {% endblock %}

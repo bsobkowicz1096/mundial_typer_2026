@@ -249,6 +249,69 @@ def special_bets(request):
     return render(request, "core/special_bets.html", {"items": items, "teams": teams})
 
 
+def _build_pechowcy(minute):
+    """
+    Returns a hypothetical ranking list if goals after `minute` didn't count.
+    `minute` must be 80 or 90 — selects home_score_80/90 fields accordingly.
+    Returns [] when no match has frozen-score data yet.
+    Each dict: username, hypo_pts, real_pts, delta, hypo_pos.
+    delta > 0 = pechowiec (would have more points without late goals).
+    """
+    score_h_field = f"home_score_{minute}"
+    score_a_field = f"away_score_{minute}"
+
+    has_data = Match.objects.filter(
+        is_finished=True, **{f"{score_h_field}__isnull": False}
+    ).exists()
+    if not has_data:
+        return []
+
+    all_finished = list(Match.objects.filter(is_finished=True).prefetch_related("bets"))
+
+    hypo_match_pts = {}
+    for match in all_finished:
+        hf = getattr(match, score_h_field)
+        af = getattr(match, score_a_field)
+        hf = hf if hf is not None else match.home_score
+        af = af if af is not None else match.away_score
+        if hf is None:
+            continue
+        if hf > af:
+            dir_f = "1"
+        elif hf < af:
+            dir_f = "2"
+        else:
+            dir_f = "X"
+        for bet in match.bets.all():
+            if bet.home_score == hf and bet.away_score == af:
+                pts = 3
+            elif bet.bet_direction == dir_f:
+                pts = 1
+            else:
+                pts = 0
+            hypo_match_pts[bet.user_id] = hypo_match_pts.get(bet.user_id, 0) + pts
+
+    leaderboards = {lb.user_id: lb for lb in Leaderboard.objects.select_related("user").all()}
+
+    rows = []
+    for user_id, match_pts in hypo_match_pts.items():
+        lb = leaderboards.get(user_id)
+        if lb is None:
+            continue
+        hypo_total = match_pts + lb.special_points
+        rows.append({
+            "username": lb.user.username,
+            "hypo_pts": hypo_total,
+            "real_pts": lb.total_points,
+            "delta":    hypo_total - lb.total_points,
+        })
+
+    rows.sort(key=lambda r: (-r["hypo_pts"], r["username"]))
+    for i, row in enumerate(rows, 1):
+        row["hypo_pos"] = i
+    return rows
+
+
 @login_required
 def analytics_dashboard(request):
     from .analytics import TEAM_NAMES
@@ -294,12 +357,17 @@ def analytics_dashboard(request):
     modal_og    = max(t['own_goals_dist'], key=t['own_goals_dist'].get, default=0)
     modal_draws = max(t['draws_dist'],     key=t['draws_dist'].get,     default=0)
 
+    pechowcy_80 = _build_pechowcy(80)
+    pechowcy_90 = _build_pechowcy(90)
+
     return render(request, 'core/analytics.html', {
         'snapshot':     snapshot,
         'top16':        top16,
         'typers':       typers,
         'modal_og':     modal_og,
         'modal_draws':  modal_draws,
+        'pechowcy_80':  pechowcy_80,
+        'pechowcy_90':  pechowcy_90,
     })
 
 
